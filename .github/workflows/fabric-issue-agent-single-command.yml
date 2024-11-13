@@ -5,8 +5,6 @@ on:
 
 jobs:
   process_fabric:
-    # only comments startsWith /fabric are triggering agent run
-    # checks user who commented to avoid abuse
     if: >
       github.event.comment.user.login == github.event.repository.owner.login &&
       startsWith(github.event.comment.body, '/fabric') &&
@@ -21,10 +19,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # github-script is used to:
-      # 1. fetch issue body and comment body
-      # 2. write comment body to fabric_input.md file
-      # 3. write issue body to fabric_input.md file
       - name: Prepare Input
         uses: actions/github-script@v7
         id: prepare-input
@@ -60,12 +54,8 @@ jobs:
           debug: true
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          LANGCHAIN_TRACING_V2: "true"
-          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
-      # create-or-update-comment is used to save output from agent back to original issue
       - name: Post Results
         uses: peter-evans/create-or-update-comment@v4
         with:
