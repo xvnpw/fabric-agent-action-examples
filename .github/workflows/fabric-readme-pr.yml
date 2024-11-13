@@ -8,7 +8,10 @@ on:
 
 jobs:
   process_fabric:
-    if: github.actor != 'github-actions[bot]'
+    if: |
+      github.actor != 'github-actions[bot]' &&
+      github.event.head_commit.author.name != 'github-actions[bot]' &&
+      !startsWith(github.event.head_commit.message, 'Merge')
     runs-on: ubuntu-latest
 
     permissions:
@@ -18,12 +21,6 @@ jobs:
       pull-requests: write
 
     steps:
-      - name: Debug
-        uses: actions/github-script@v7
-        with:
-          script: |
-            console.log(JSON.stringify(${{ github.event }}));
-
       - name: Checkout
         uses: actions/checkout@v4
 
