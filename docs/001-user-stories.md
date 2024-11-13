@@ -8,7 +8,7 @@ As a GitHub user, I want to be able to use a GitHub action to leverage a large l
 
 1. The GitHub action should be able to detect when a user adds a comment to a GitHub issue that starts with the keyword "fabric".
 2. The action should be able to parse the rest of the comment to determine the specific action the user wants to perform, such as "create stride threat model
-3. The action should then pass the relevant information from the issue (e.g., the issue body in Markdown format) to the `fabric`, which will process the request and generate the appropriate output..
+3. The action should then pass the relevant information from the issue (e.g., the issue body in Markdown format) to the `fabric`, which will process the request and generate the appropriate output...
 4. The action should then post the output as a new comment on the original GitHub issue.
 5. The action should handle any errors or failures gracefully, providing the user with a clear indication of what went wrong.
 
