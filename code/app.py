@@ -30,8 +30,6 @@ class AppConfig:
     fabric_model: str
     fabric_temperature: float
     agent_type: Literal["single_command", "react"]
-    fabric_patterns_included: Optional[str] = None
-    fabric_patterns_excluded: Optional[str] = None
 
     def __post_init__(self):
         """Validate configuration after initialization"""
@@ -157,16 +155,6 @@ def parse_arguments() -> AppConfig:
         default=0,
         help="Sampling temperature for fabric model (default: 0)",
     )
-    fabric_group.add_argument(
-        "--fabric-patterns-included",
-        type=str,
-        help="Comma separated list of fabric patterns to include in agent",
-    )
-    fabric_group.add_argument(
-        "--fabric-patterns-excluded",
-        type=str,
-        help="Comma separated list of fabric patterns to exclude in agent",
-    )
 
     args = parser.parse_args()
 
@@ -187,18 +175,14 @@ def main() -> None:
         llm_provider = LLMProvider(config)
         fabric_llm = llm_provider.createFabricLLM()
         fabric_tools = FabricTools(
-            fabric_llm.llm,
-            fabric_llm.use_system_message,
-            fabric_llm.number_of_tools,
-            config.fabric_patterns_included,
-            config.fabric_patterns_excluded,
+            fabric_llm.llm, fabric_llm.use_system_message, fabric_llm.number_of_tools
         )
 
         agent_builder = AgentBuilder(config.agent_type, llm_provider, fabric_tools)
         graph = agent_builder.build()
 
-        executor = GraphExecutor(config)
-        executor.execute(graph, input_str)
+        executor = GraphExecutor(config, graph)
+        executor.execute(input_str)
 
         logger.info("Fabric Agent Action completed successfully")
 
@@ -217,8 +201,9 @@ def main() -> None:
 class GraphExecutor:
     """Handles graph execution and output generation"""
 
-    def __init__(self, config: AppConfig):
+    def __init__(self, config: AppConfig, graph):
         self.config = config
+        self.graph = graph
         self._setup_output_encoding()
 
     def _setup_output_encoding(self) -> None:
@@ -232,9 +217,9 @@ class GraphExecutor:
                     f"Could not set UTF-8 encoding: {e}. Falling back to system default."
                 )
 
-    def execute(self, graph, input_str: str) -> None:
+    def execute(self, input_str: str) -> None:
         try:
-            messages_state = self._invoke_graph(graph, input_str)
+            messages_state = self._invoke_graph(self.graph, input_str)
 
             for msg in messages_state["messages"]:
                 logger.debug(f"Message: {msg.pretty_repr()}")
