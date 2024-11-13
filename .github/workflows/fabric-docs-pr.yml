@@ -81,10 +81,13 @@ jobs:
           rm -f updated_file_00.md
           
           for i in "${!FILES[@]}"; do
+            echo "idx=$i"
             index=$((i + 1))
             updated_file=$(printf "updated_file_%02d.md" "$index")
+            echo $updated_file
             if [[ -f "$updated_file" ]]; then
               sed '1,2d' "$updated_file" > "${FILES[$i]}"
+              echo "${FILES[$i]}"
             fi
           done
 
@@ -104,7 +107,8 @@ jobs:
             ```
             
             Please review the changes carefully before merging.
+          add-paths: |
+            docs/**
           labels: |
             fabric
             documentation
-            automated-pr
