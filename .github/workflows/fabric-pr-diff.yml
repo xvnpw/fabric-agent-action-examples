@@ -1,0 +1,47 @@
+name: Git Diff on Pull Request
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    paths:
+      - 'code/**'
+
+jobs:
+  process_fabric:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out the code
+        uses: actions/checkout@v4
+
+      # Fetch the target branch
+      - name: Fetch target branch
+        run: |
+          git fetch origin ${{ github.event.pull_request.base.ref }}
+
+      # Run the git diff command
+      - name: Generate Git Diff
+        run: |
+          git diff origin/${{ github.event.pull_request.base.ref }} > diff_output.txt
+          printf "/fabric draft pull request: \n\n" > fabric_input.md
+          cat diff_output.txt >> fabric_input.md
+
+      - name: Execute Fabric Patterns
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.18
+        with:
+          input_file: "fabric_input.md"
+          output_file: "fabric_output.md"
+          fabric_provider: "openrouter"
+          fabric_model: "openai/o1-preview"
+          fabric_temperature: 0.2
+          fabric_patterns_included: "write_pull_request,summarize_git_diff"
+          debug: true
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      - name: Post Results
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: fabric_output.md

@@ -1,0 +1,91 @@
+name: Process Documentation Files
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'  # Trigger on any change in the docs/ directory
+  workflow_dispatch:
+
+jobs:
+  process_fabric:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Debug
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log(JSON.stringify(${{ github.event }}));
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Get Changed Files
+        id: changed_files
+        run: |
+          # Get the list of files that were added or modified in the last commit within the docs/ directory
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- docs/)
+          echo "CHANGED_FILES=${CHANGED_FILES}" >> $GITHUB_ENV
+
+      - name: Prepare Fabric Input
+        run: |
+          # Create an empty fabric input file
+          printf "/fabric improve writing for files: \n\n" > fabric_input.md
+
+          # Only include files that were added or changed
+          for file in ${CHANGED_FILES}; do
+            if [[ -f "$file" ]]; then
+              echo "Processing $file..."
+              printf "# $file\n" >> fabric_input.md
+              cat "$file" >> fabric_input.md
+              echo -e "\n\n" >> fabric_input.md
+            fi
+          done
+        env:
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
+
+      - name: Execute Fabric Patterns
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.18
+        with:
+          input_file: "fabric_input.md"
+          output_file: "fabric_output.md"
+          agent_type: react
+          fabric_patterns_included: "clean_text,improve_writing,create_summary"
+          debug: true
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Update Changed Files
+        run: |
+          # Split the improved content back into individual files
+          IFS=$'\n' read -d '' -r -a files <<< "$CHANGED_FILES"
+          split -l $(wc -l < fabric_input.md) fabric_output.md docs/updated_
+
+          # Replace only the changed files with the updated ones
+          index=0
+          for file in "${files[@]}"; do
+            updated_file="docs/updated_$(basename "$file")"
+            if [[ -f "$updated_file" ]]; then
+              mv "$updated_file" "$file"
+            fi
+            index=$((index + 1))
+          done
+        env:
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: create-pull-request/docs
+          title: (AI Generated) Improve writing for modified documentation files
+          body: Automated pull request based on your changes to the documentation files. Please review it carefully.
+          labels: 'fabric'
+          add-paths: |
+            docs/**

@@ -1,0 +1,69 @@
+name: Fabric Pattern Processing using Single Command Agent
+on:
+  issue_comment:
+    types: [created, edited]
+
+jobs:
+  process_fabric:
+    # only comments startsWith /fabric are triggering agent run
+    # checks user who commented to avoid abuse
+    if: >
+      github.event.comment.user.login == github.event.repository.owner.login &&
+      startsWith(github.event.comment.body, '/fabric') &&
+      !github.event.issue.pull_request &&
+      contains(github.event.issue.labels.*.name, 'single_command_agent')
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # github-script is used to:
+      # 1. fetch issue body and comment body
+      # 2. write comment body to fabric_input.md file
+      # 3. write issue body to fabric_input.md file
+      - name: Prepare Input
+        uses: actions/github-script@v7
+        id: prepare-input
+        with:
+          script: |
+            const issue = await github.rest.issues.get({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const comment = await github.rest.issues.getComment({
+              comment_id: context.payload.comment.id,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+
+            const input = `${comment.data.body}\n\nGitHub issue:\n${issue.data.body}`;
+            require('fs').writeFileSync('fabric_input.md', input);
+
+            return input;
+
+      - name: Execute Fabric Patterns
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.18
+        with:
+          input_file: "fabric_input.md"
+          output_file: "fabric_output.md"
+          fabric_provider: "openrouter"
+          fabric_model: "openai/o1-preview"
+          fabric_temperature: 0.2
+          fabric_patterns_included: "clean_text,create_stride_threat_model,create_design_document,review_design,refine_design_document,create_threat_scenarios,improve_writing,create_quiz,create_summary"
+          debug: true
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+
+      # create-or-update-comment is used to save output from agent back to original issue
+      - name: Post Results
+        uses: peter-evans/create-or-update-comment@v4
+        with:
+          issue-number: ${{ github.event.issue.number }}
+          body-path: fabric_output.md

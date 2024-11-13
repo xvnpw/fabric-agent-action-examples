@@ -1,0 +1,52 @@
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'README.md'
+  workflow_dispatch:
+
+jobs:
+  process_fabric:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+
+    permissions:
+      # Give the default GITHUB_TOKEN write permission to commit and push the
+      # added or changed files to the repository.
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Debug
+        uses: actions/github-script@v7
+        with:
+          script: |
+            console.log(JSON.stringify(${{ github.event }}));
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - run: |
+        printf "/fabric improve writing: \n\n" > fabric_input.md
+        cat README.md >> fabric_input.md
+
+      - name: Execute Fabric Patterns
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.18
+        with:
+          input_file: "fabric_input.md"
+          output_file: "README.md"
+          fabric_patterns_included: "clean_text,improve_writing,create_summary"
+          debug: true
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: create-pull-request/readme
+          title: (AI Generated) Improve writing for README.md
+          body: Automated pull request based on your changes to README.md. Please review it carefully.
+          labels: 'fabric'
+          add-paths: |
+            README.md
