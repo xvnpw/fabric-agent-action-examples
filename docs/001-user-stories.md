@@ -12,7 +12,7 @@ As a GitHub user, I want to be able to use a GitHub action to leverage a large l
 4. The action should then post the output as a new comment on the original GitHub issue.
 5. The action should handle any errors or failures gracefully, providing the user with a clear indication of what went wrong.
 
-## User can run `fabric` with references to additional files in repository
+## User can run fabric` with references to additional files in repository
 
 As a GitHub user, I want the GitHub action to be able to fetch additional files from the repository, along with the issue information, so that I can provide the fabric with a more comprehensive set of data to process my requests.
 
