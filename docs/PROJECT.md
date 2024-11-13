@@ -19,7 +19,7 @@ Direct clients of AI Nutrition-Pro will be applications like DietMaster Pro, Nut
 - each dietitian can have multiple customers...
 - the application will be deployed into AWS cloud and use cloud-based services to store and process data.
 - the application will store and process PII information that might contain personal health data of customers.
-- ChatGPT 35 will be used as LLM..
+- ChatGPT 35 will be used as LLM...
 
 ## High level connection view
 
