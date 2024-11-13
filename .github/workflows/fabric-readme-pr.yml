@@ -36,6 +36,7 @@ jobs:
         with:
           input_file: "fabric_input.md"
           output_file: "README.md"
+          agent_preamble: ""
           fabric_provider: anthropic
           fabric_model: claude-3-5-sonnet-20240620
           fabric_patterns_included: "clean_text,improve_writing,create_summary"
