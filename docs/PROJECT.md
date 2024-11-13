@@ -14,7 +14,7 @@ Direct clients of AI Nutrition-Pro will be applications like DietMaster Pro, Nut
 
 ## Core Features
 
-- multi-tenant API application - where tenant is client application like DietMaster Pro, Nutritionist Pro, or others.
+- multi  tenant API application - where tenant is client application like DietMaster Pro, Nutritionist Pro, or others.
 - each tenant can contain many dietitians.
 - each dietitian can have multiple customers.
 - the application will be deployed into AWS cloud and use cloud-based services to store and process data.

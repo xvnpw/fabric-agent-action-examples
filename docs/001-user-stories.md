@@ -4,7 +4,7 @@
 
 As a GitHub user, I want to be able to use a GitHub action to leverage a large language model (LLM) from the [fabric](https://github.com/danielmiessler/fabric) app to perform various actions on GitHub issues, so that I can automate and streamline my workflow.
 
-**Acceptance Criteria:**
+**Acceptance Criteria**
 
 1. The GitHub action should be able to detect when a user adds a comment to a GitHub issue that starts with the keyword "fabric".
 2. The action should be able to parse the rest of the comment to determine the specific action the user wants to perform, such as "create stride threat model".
