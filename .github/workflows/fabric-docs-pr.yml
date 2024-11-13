@@ -20,6 +20,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Fetch the last two commits to ensure HEAD~1 is available
 
       - name: Get Changed Files
         id: changed_files
