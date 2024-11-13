@@ -25,8 +25,9 @@ jobs:
         id: changed_files
         run: |
           # Get the list of files that were added or modified in the last commit within the docs/ directory
-          CHANGED_FILES=$(git diff --name-only HEAD -- docs/)
+          CHANGED_FILES=$(git diff --name-only HEAD~1 HEAD -- docs/)
           echo "CHANGED_FILES=${CHANGED_FILES}" >> $GITHUB_ENV
+          echo $CHANGED_FILES
 
       - name: Prepare Fabric Input
         run: |
