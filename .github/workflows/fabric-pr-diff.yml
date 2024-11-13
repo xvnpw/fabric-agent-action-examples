@@ -27,7 +27,7 @@ jobs:
       - name: Generate Git Diff
         run: |
           git diff origin/${{ github.event.pull_request.base.ref }} > diff_output.txt
-          printf "/fabric draft pull request: \n\n" > fabric_input.md
+          printf "/fabric write pull request: \n\n" > fabric_input.md
           cat diff_output.txt >> fabric_input.md
 
       - name: Execute Fabric Patterns
@@ -43,9 +43,6 @@ jobs:
           debug: true
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
-          LANGCHAIN_TRACING_V2: "true"
-          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Post Results
