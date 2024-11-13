@@ -32,11 +32,10 @@ jobs:
           cat README.md >> fabric_input.md
 
       - name: Execute Fabric Patterns
-        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.20
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.21
         with:
           input_file: "fabric_input.md"
           output_file: "README.md"
-          agent_preamble: ""
           fabric_provider: anthropic
           fabric_model: claude-3-5-sonnet-20240620
           fabric_patterns_included: "clean_text,improve_writing,create_summary"
