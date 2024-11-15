@@ -58,7 +58,7 @@ jobs:
           CHANGED_FILES: ${{ steps.changed_files.outputs.changed_files }}
 
       - name: Execute Fabric patterns
-        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.23
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.24
         with:
           input_file: "fabric_input.md"
           output_file: "fabric_output.md"
