@@ -36,7 +36,7 @@ jobs:
               repo: context.repo.repo
             });
 
-            const input = `${comment.data.body}\n\nGitHub issue:\n${issue.data.body}`;
+            const input = `${comment.data.body}\n\n${issue.data.body}`;
             require('fs').writeFileSync('fabric_input.md', input);
 
             return input;
