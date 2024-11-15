@@ -1,4 +1,4 @@
-name: Fabric Pattern Processing using Single Command Agent
+name: Fabric Pattern Processing using Router Agent
 on:
   issue_comment:
     types: [created, edited]
