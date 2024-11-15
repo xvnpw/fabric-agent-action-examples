@@ -48,8 +48,6 @@ jobs:
           output_file: "fabric_output.md"
           agent_type: "react"
           agent_preamble_enabled: true
-          agent_provider: "openrouter"
-          agent_model: "openai/o1-preview"
           fabric_provider: "openrouter"
           fabric_model: "openai/o1-preview"
           fabric_temperature: 0.2
