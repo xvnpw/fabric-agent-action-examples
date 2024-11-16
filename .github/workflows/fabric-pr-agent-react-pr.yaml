@@ -35,8 +35,8 @@ jobs:
               repo: context.repo.repo
             });
             
-            // Check if PR is from a fork
-            if (pr.data.head.repo.full_name !== github.repository) {
+            // Check if PR is from a fork by checking if head repo owner is different
+            if (pr.data.head.repo.owner.login !== context.repo.owner) {
               core.setFailed('This action cannot run on pull requests from forks');
               return;
             }
