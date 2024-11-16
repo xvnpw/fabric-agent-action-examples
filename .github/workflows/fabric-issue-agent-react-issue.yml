@@ -1,4 +1,4 @@
-name: Fabric Pattern Processing using ReAct Agent Experimental Issue
+name: Fabric Pattern Processing using ReAct Issue Agent
 on:
   issue_comment:
     types: [created, edited]
@@ -9,7 +9,7 @@ jobs:
       github.event.comment.user.login == github.event.repository.owner.login &&
       startsWith(github.event.comment.body, '/fabric') &&
       !github.event.issue.pull_request &&
-      contains(github.event.issue.labels.*.name, 'react_agent_experimental_issue')
+      contains(github.event.issue.labels.*.name, 'react_agent_issue')
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -66,11 +66,11 @@ jobs:
             return output;
 
       - name: Execute Fabric Patterns
-        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.27
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.28
         with:
           input_file: "fabric_input.md"
           output_file: "fabric_output.md"
-          agent_type: "react_experimental_issue"
+          agent_type: "react_issue"
           fabric_temperature: 0.2
           fabric_patterns_included: "clean_text,create_stride_threat_model,create_design_document,review_design,refine_design_document,create_threat_scenarios,improve_writing,create_quiz,create_summary"
           debug: true
