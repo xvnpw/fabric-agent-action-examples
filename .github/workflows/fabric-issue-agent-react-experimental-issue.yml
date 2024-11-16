@@ -49,11 +49,14 @@ jobs:
             let output = `INSTRUCTION:\n${command}\n\n`;
             
             // Add issue information
-            output += `GITHUB ISSUE, NR: ${issue.data.number}, AUTHOR: ${issue.data.user.login}\n`;
+            output += `GITHUB ISSUE, NR: ${issue.data.number}, AUTHOR: ${issue.data.user.login}, TITLE: ${issue.data.title}\n`;
             output += `${issue.data.body}\n\n`;
 
             // Add all comments
             for (const c of comments.data) {
+              if c.id === comment.data.id {
+                break;
+              }
               output += `ISSUE COMMENT, ID: ${c.id}, AUTHOR: ${c.user.login}\n`;
               output += `${c.body}\n\n`;
             }
