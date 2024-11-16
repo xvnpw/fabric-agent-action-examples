@@ -28,28 +28,32 @@ jobs:
         id: prepare-input
         with:
           script: |
-            let pr, comment, comments;
-            
-            // Handle PR comments
-            pr = await github.rest.pulls.get({
+            // Get PR information
+            const pr = await github.rest.pulls.get({
               pull_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo
             });
             
-            comment = await github.rest.issues.getComment({
+            // Check if PR is from a fork
+            if (pr.data.head.repo.full_name !== context.repo.full_name) {
+              core.setFailed('This action cannot run on pull requests from forks');
+              return;
+            }
+            
+            const comment = await github.rest.issues.getComment({
               comment_id: context.payload.comment.id,
               owner: context.repo.owner,
               repo: context.repo.repo
             });
             
             // Get all PR comments
-            comments = await github.rest.issues.listComments({
+            const comments = await github.rest.issues.listComments({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo
             });
-            
+
             // Get git diff
             const diff = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -73,8 +77,7 @@ jobs:
             output += `GIT DIFF:\n${diff.data}\n\n`;
 
             // Add all comments that came before the triggering comment
-            const commentsList = comments.data;
-            for (const c of commentsList) {
+            for (const c of comments.data) {
               if (c.id === comment.data.id) {
                 break;
               }
