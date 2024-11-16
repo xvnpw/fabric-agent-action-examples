@@ -1,7 +1,5 @@
 name: Fabric Pattern Processing using ReAct PR Agent 
 on:
-  pull_request_review_comment:
-    types: [created, edited]
   issue_comment:
     types: [created, edited]
 
@@ -14,11 +12,12 @@ jobs:
   process_fabric:
     if: >
       github.event.comment.user.login == github.event.repository.owner.login &&
-      startsWith(github.event.comment.body, '/fabric') 
+      startsWith(github.event.comment.body, '/fabric') &&
+      github.event.issue.pull_request
     runs-on: ubuntu-latest
     permissions:
       pull-requests: write
-      contents: write
+      contents: read
 
     steps:
       - name: Checkout
@@ -30,58 +29,39 @@ jobs:
         with:
           script: |
             let pr, comment, comments;
-            const isPRReviewComment = context.eventName === 'pull_request_review_comment';
             
-            if (isPRReviewComment) {
-              // Handle PR review comments
-              pr = await github.rest.pulls.get({
-                pull_number: context.payload.pull_request.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo
-              });
-              
-              comment = context.payload.comment;
-              
-              // Get all review comments
-              comments = await github.rest.pulls.listReviewComments({
-                pull_number: context.payload.pull_request.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo
-              });
-            } else {
-              // Handle PR comments
-              pr = await github.rest.pulls.get({
-                pull_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo
-              });
-              
-              comment = await github.rest.issues.getComment({
-                comment_id: context.payload.comment.id,
-                owner: context.repo.owner,
-                repo: context.repo.repo
-              });
-              
-              // Get all PR comments
-              comments = await github.rest.issues.listComments({
-                issue_number: context.issue.number,
-                owner: context.repo.owner,
-                repo: context.repo.repo
-              });
-            }
-
+            // Handle PR comments
+            pr = await github.rest.pulls.get({
+              pull_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            
+            comment = await github.rest.issues.getComment({
+              comment_id: context.payload.comment.id,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            
+            // Get all PR comments
+            comments = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
+            
             // Get git diff
             const diff = await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: isPRReviewComment ? context.payload.pull_request.number : context.issue.number,
+              pull_number: context.issue.number,
               mediaType: {
                 format: 'diff'
               }
             });
 
             // Extract command from the triggering comment
-            const command = isPRReviewComment ? comment.body : comment.data.body;
+            const command = comment.data.body;
 
             let output = `INSTRUCTION:\n${command}\n\n`;
             
@@ -93,9 +73,9 @@ jobs:
             output += `GIT DIFF:\n${diff.data}\n\n`;
 
             // Add all comments that came before the triggering comment
-            const commentsList = isPRReviewComment ? comments.data : comments.data;
+            const commentsList = comments.data;
             for (const c of commentsList) {
-              if (c.id === (isPRReviewComment ? comment.id : comment.data.id)) {
+              if (c.id === comment.data.id) {
                 break;
               }
               output += `PULL REQUEST COMMENT, ID: ${c.id}, AUTHOR: ${c.user.login}\n`;
