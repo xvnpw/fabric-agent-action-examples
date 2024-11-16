@@ -1,4 +1,4 @@
-name: Fabric Pattern Processing using ReAct Agent
+name: Fabric Pattern Processing using ReAct Agent Experimental Issue
 on:
   issue_comment:
     types: [created, edited]
@@ -9,7 +9,7 @@ jobs:
       github.event.comment.user.login == github.event.repository.owner.login &&
       startsWith(github.event.comment.body, '/fabric') &&
       !github.event.issue.pull_request &&
-      contains(github.event.issue.labels.*.name, 'react_agent')
+      contains(github.event.issue.labels.*.name, 'react_agent_experimental_issue')
     runs-on: ubuntu-latest
     permissions:
       issues: write
@@ -36,17 +36,38 @@ jobs:
               repo: context.repo.repo
             });
 
-            const input = `${comment.data.body}\n\n${issue.data.body}`;
-            require('fs').writeFileSync('fabric_input.md', input);
+            // Get all comments for this issue to include in the output
+            const comments = await github.rest.issues.listComments({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo
+            });
 
-            return input;
+            // Extract command from the triggering comment
+            const command = comment.data.body;
+
+            let output = `INSTRUCTION:\n${command}\n\n`;
+            
+            // Add issue information
+            output += `GITHUB ISSUE, NR: ${issue.data.number}, AUTHOR: ${issue.data.user.login}\n`;
+            output += `${issue.data.body}\n\n`;
+
+            // Add all comments
+            for (const c of comments.data) {
+              output += `ISSUE COMMENT, ID: ${c.id}, AUTHOR: ${c.user.login}\n`;
+              output += `${c.body}\n\n`;
+            }
+
+            require('fs').writeFileSync('fabric_input.md', output);
+
+            return output;
 
       - name: Execute Fabric Patterns
         uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.26
         with:
           input_file: "fabric_input.md"
           output_file: "fabric_output.md"
-          agent_type: "react"
+          agent_type: "react_agent_experimental_issue"
           agent_preamble_enabled: true
           fabric_temperature: 0.2
           fabric_patterns_included: "clean_text,create_stride_threat_model,create_design_document,review_design,refine_design_document,create_threat_scenarios,improve_writing,create_quiz,create_summary"
