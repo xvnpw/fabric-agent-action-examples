@@ -54,7 +54,7 @@ jobs:
 
             // Add all comments
             for (const c of comments.data) {
-              if c.id === comment.data.id {
+              if (c.id === comment.data.id) {
                 break;
               }
               output += `ISSUE COMMENT, ID: ${c.id}, AUTHOR: ${c.user.login}\n`;
