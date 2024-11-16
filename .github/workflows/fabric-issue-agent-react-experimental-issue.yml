@@ -68,7 +68,6 @@ jobs:
           input_file: "fabric_input.md"
           output_file: "fabric_output.md"
           agent_type: "react_experimental_issue"
-          agent_preamble_enabled: true
           fabric_temperature: 0.2
           fabric_patterns_included: "clean_text,create_stride_threat_model,create_design_document,review_design,refine_design_document,create_threat_scenarios,improve_writing,create_quiz,create_summary"
           debug: true
