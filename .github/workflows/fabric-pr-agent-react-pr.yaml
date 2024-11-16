@@ -36,7 +36,7 @@ jobs:
             });
             
             // Check if PR is from a fork
-            if (pr.data.head.repo.full_name !== context.repo.full_name) {
+            if (pr.data.head.repo.full_name !== github.repository) {
               core.setFailed('This action cannot run on pull requests from forks');
               return;
             }
