@@ -3,11 +3,6 @@ on:
   issue_comment:
     types: [created, edited]
 
-# &&
-#       startsWith(github.event.comment.body, '/fabric') &&
-#       (github.event.issue.pull_request || github.event_name == 'pull_request_review_comment') &&
-#       github.event.pull_request.head.repo.full_name == github.repository
-
 jobs:
   process_fabric:
     if: >
