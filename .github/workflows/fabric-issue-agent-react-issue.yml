@@ -9,7 +9,7 @@ jobs:
       github.event.comment.user.login == github.event.repository.owner.login &&
       startsWith(github.event.comment.body, '/fabric') &&
       !github.event.issue.pull_request &&
-      contains(github.event.issue.labels.*.name, 'react_agent_issue')
+      contains(github.event.issue.labels.*.name, 'react_issue_agent')
     runs-on: ubuntu-latest
     permissions:
       issues: write
