@@ -68,6 +68,8 @@ jobs:
           debug: true
         env:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          LANGCHAIN_API_KEY: ${{ secrets.LANGCHAIN_API_KEY }}
+          LANGCHAIN_TRACING_V2: true
 
       - name: Update changed files
         id: update_files
