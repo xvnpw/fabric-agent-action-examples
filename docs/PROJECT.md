@@ -6,6 +6,7 @@ Dietitians use online applications to create meals, diets and calculate calories
 
 ## Project Overview
 
+
 AI Nutrition-Pro will be backend API application that will have the possibility to integrate with any meal planner application for dietitians. It will reproduce the personal style of a nutrition specialist based on samples.
 
 
