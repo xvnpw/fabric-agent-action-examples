@@ -6,6 +6,7 @@ GitHub Action designed to automate complex workflows
 through agent based approach. Powered by Fabric Patterns and built with lang graph, this action leverages the capabilities of Large Language Models (LMs) to intelligently select and execute patterns, streamlining your CI/CD processes and other automation tasks. Explore the examples to see how `fabric-agent-action` can simplify and enhance your workflows with advanced AI-driven automation?
 
 
+
 ## Examples
 
 | Example | Links |
