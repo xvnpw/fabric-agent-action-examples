@@ -2,6 +2,9 @@
 
 ## User can run `fabric` withing Github issues
 
+
+
+
 As a GitHub user, I want to be able to use a GitHub action to leverage a large language model (LLM) from the [fabric](https://github.com/danielmiessler/fabric) app to perform various actions on GitHub issues, so that I can automate and streamline my workflow.
 
 **Acceptance Criteria**
