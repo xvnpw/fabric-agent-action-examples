@@ -45,7 +45,7 @@ jobs:
           {
             printf "INSTRUCTION:\n /fabric improve writing for multiply files. Each file is stating with # FILE filepath, e.g. # FILE docs/text.txt. Return only improved files, without any additional comments or special formatting."
             echo
-            printf "INPUT:\n"
+            printf "\nINPUT:\n"
             while IFS= read -r file; do
               if [ -f "$file" ]; then
                 echo "# FILE $file"
