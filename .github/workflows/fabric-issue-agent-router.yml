@@ -36,13 +36,13 @@ jobs:
               repo: context.repo.repo
             });
 
-            const input = `${comment.data.body}\n\n${issue.data.body}`;
+            const input = `INSTRUCTION:\n${comment.data.body}\n\nINPUT:\n${issue.data.body}`;
             require('fs').writeFileSync('fabric_input.md', input);
 
             return input;
 
       - name: Execute Fabric Patterns
-        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.28
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.30
         with:
           input_file: "fabric_input.md"
           output_file: "fabric_output.md"

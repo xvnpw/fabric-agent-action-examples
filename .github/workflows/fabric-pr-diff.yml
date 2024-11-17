@@ -28,11 +28,11 @@ jobs:
       - name: Generate Git Diff
         run: |
           git diff origin/${{ github.event.pull_request.base.ref }} > diff_output.txt
-          printf "/fabric write pull request: \n\n" > fabric_input.md
+          printf "INSTRUCTION:\n/fabric write pull request: \n\nINPUT:\n" > fabric_input.md
           cat diff_output.txt >> fabric_input.md
 
       - name: Execute Fabric Patterns
-        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.28
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.30
         with:
           input_file: "fabric_input.md"
           output_file: "fabric_output.md"

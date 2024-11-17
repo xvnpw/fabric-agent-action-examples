@@ -24,11 +24,11 @@ jobs:
         uses: actions/checkout@v4
 
       - run: |
-          printf "/fabric improve writing: \n\n" > fabric_input.md
+          printf "INSTRUCTION:\n/fabric improve writing: \n\nINPUT:\n" > fabric_input.md
           cat README.md >> fabric_input.md
 
       - name: Execute Fabric Patterns
-        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.28
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.30
         with:
           input_file: "fabric_input.md"
           output_file: "README.md"

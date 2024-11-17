@@ -43,8 +43,9 @@ jobs:
         id: prepare_input
         run: |
           {
-            echo "fabric improve writing for multiply files. Each file is stating with # FILE filepath, e.g. # FILE docs/text.txt. Return only improved files, without any additional comments or special formatting."
+            printf "INSTRUCTION:\n /fabric improve writing for multiply files. Each file is stating with # FILE filepath, e.g. # FILE docs/text.txt. Return only improved files, without any additional comments or special formatting."
             echo
+            printf "INPUT:\n"
             while IFS= read -r file; do
               if [ -f "$file" ]; then
                 echo "# FILE $file"
@@ -58,7 +59,7 @@ jobs:
           CHANGED_FILES: ${{ steps.changed_files.outputs.changed_files }}
 
       - name: Execute Fabric patterns
-        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.28
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.30
         with:
           input_file: "fabric_input.md"
           output_file: "fabric_output.md"
