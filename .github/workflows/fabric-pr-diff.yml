@@ -32,7 +32,7 @@ jobs:
           cat diff_output.txt >> fabric_input.md
 
       - name: Execute Fabric Patterns
-        uses: xvnpw/fabric-agent-action:v0.0.30
+        uses: xvnpw/fabric-agent-action@v0.0.30
         with:
           input_file: "fabric_input.md"
           output_file: "fabric_output.md"
