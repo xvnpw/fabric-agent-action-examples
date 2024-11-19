@@ -28,7 +28,7 @@ jobs:
           cat README.md >> fabric_input.md
 
       - name: Execute Fabric Patterns
-        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v0.0.30
+        uses: docker://ghcr.io/xvnpw/fabric-agent-action:v1
         with:
           input_file: "fabric_input.md"
           output_file: "README.md"
